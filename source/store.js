@@ -5,10 +5,14 @@
 // License: MIT-license
 //
 (function () {
+    var has = function (object, key) {
+        return Object.prototype.hasOwnProperty.call(object, key);
+    };
+    
     var objectGetLength = function (object) {
         var count = 0;
         for (var key in object) {
-            if (object.hasOwnProperty(key)) { count++; }
+            if (has(object, key)) { count++; }
         }
         
         return count;
@@ -48,7 +52,7 @@
     
     Store.prototype.applyDefaults = function () {
         for (var key in this.defaults) {
-            if (this.defaults.hasOwnProperty(key) && this.get(key) === undefined) {
+            if (has(this.defaults, key) && this.get(key) === undefined) {
                 this.set(key, this.defaults[key]);
             }
         }
@@ -66,13 +70,13 @@
             
             if (this.oldObject) {
                 for (var key in this.newObject) {
-                    if (this.newObject.hasOwnProperty(key) && this.newObject[key] !== this.oldObject[key]) {
+                    if (has(this.newObject, key) && this.newObject[key] !== this.oldObject[key]) {
                         this.fireEvent(key, this.newObject[key]);
                     }
                 }
                 
                 for (var key in this.oldObject) {
-                    if (this.oldObject.hasOwnProperty(key) && !this.newObject.hasOwnProperty(key)) {
+                    if (has(this.oldObject, key) && !has(this.newObject, key)) {
                         this.fireEvent(key, this.newObject[key]);
                     }
                 }
@@ -139,7 +143,7 @@
     Store.prototype.fromObject = function (values, merge) {
         if (!merge) { this.reset(); }
         for (var key in values) {
-            if (values.hasOwnProperty(key)) {
+            if (has(values, key)) {
                 this.set(key, values[key]);
             }
         }

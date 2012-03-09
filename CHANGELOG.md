@@ -1,6 +1,9 @@
 # Changelog
 *Feature/Change/Bug/Other*
 
+### v3.1.1
+* **Bug**: Fixed [hasOwnProperty issue](http://www.devthought.com/2012/01/18/an-object-is-not-a-hash/)
+
 ### v3.1 [ API CHANGE! ]
 * **Feature**: Added instance method applyDefaults
 * **Feature**: Added instance method watcher
