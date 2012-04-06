@@ -1,0 +1,430 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>store.js by frankkohlhepp</title>
+    
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>store.js</h1>
+        <p>A powerful toolkit for localStorage.</p>
+        <p class="view"><a href="https://github.com/frankkohlhepp/store-js">View the Project on GitHub <small>frankkohlhepp/store-js</small></a></p>
+        <ul>
+          <li><a href="https://github.com/frankkohlhepp/store-js/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/frankkohlhepp/store-js/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/frankkohlhepp/store-js">Fork On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a href="https://github.com/frankkohlhepp/store-js">store.js</a> v3.1.1</h1>
+
+<p><em>A powerful toolkit for localStorage.</em></p>
+
+<h3>Info</h3>
+
+<p>store.js aims to solve a bunch of localStorage's problems.<br>
+The main problem is that localStorage stringifies every value you save.<br>
+Starting with that issue, localStorage is not very powerful: You just can save key-value pairs. And that's it.<br>
+You don't have any structure (or groups), you cannot make a second, clean group, you cannot set default values,
+and you cannot just put a group of values into an object. Also, there are no events.</p>
+
+<p>store.js solves each and every one of those problems!</p>
+
+<h3>Howto</h3>
+
+<p>store.js groups your values into something called a store. Multiple stores are separated from each other.<br>
+So let's make a new store:</p>
+
+<div class="highlight">
+<pre><span class="kd">var</span> <span class="nx">settings</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Store</span><span class="p">(</span><span class="s2">"settings"</span><span class="p">);</span>
+</pre>
+</div>
+
+
+<p>Just choose a name for the new store, and save it in a variable. <strong>Always</strong> remember to use the "new" keyword! Never leave it off!<br>
+Now you can almost normally get, set and remove values:</p>
+
+<div class="highlight">
+<pre><span class="nx">settings</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s2">"color"</span><span class="p">,</span> <span class="s2">"blue"</span><span class="p">);</span>
+<span class="nx">settings</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s2">"enable_test1"</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+<span class="nx">settings</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s2">"number_of_rainbows"</span><span class="p">,</span> <span class="mi">8</span><span class="p">);</span>
+
+<span class="c1">// and</span>
+
+<span class="kd">var</span> <span class="nx">color</span> <span class="o">=</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">"color"</span><span class="p">);</span>
+
+<span class="c1">// and</span>
+
+<span class="nx">settings</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="s2">"color"</span><span class="p">);</span>
+</pre>
+</div>
+
+
+<p>Pretty straight forward. But it automatically JSON-serializes and JSON-deserializes your values. So, if you put a boolean in, a boolean comes out.
+All data types are supported (including objects and arrays), except functions and types that JSON can't parse.<br>
+null is supported as a data type. undefined however means that there is no such value. So, to save "nothing", always use null.</p>
+
+<p>store.js saves the values with the store's name and a prefix, e.g. the key "color" becomes "store.settings.color" in localStorage.</p>
+
+<h3>Defaults</h3>
+
+<p>Now let's take a look at how you can specify some default values:</p>
+
+<div class="highlight">
+<pre><span class="kd">var</span> <span class="nx">defaults</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"color"</span><span class="o">:</span> <span class="s2">"red"</span><span class="p">,</span>
+    <span class="s2">"enable_test1"</span><span class="o">:</span> <span class="kc">false</span>
+<span class="p">};</span>
+
+<span class="kd">var</span> <span class="nx">settings</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Store</span><span class="p">(</span><span class="s2">"settings"</span><span class="p">,</span> <span class="nx">defaults</span><span class="p">);</span>
+</pre>
+</div>
+
+
+<p>You simply create an object with default values and pass it as the second argument to the constructor.<br>
+Defaults are saved in the instance variable "defaults". You can simple get or set the values from this object.</p>
+
+<div class="highlight">
+<pre><span class="kd">var</span> <span class="nx">value</span> <span class="o">=</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">defaults</span><span class="p">.</span><span class="nx">myValue</span><span class="p">;</span>
+
+<span class="c1">// and</span>
+
+<span class="nx">settings</span><span class="p">.</span><span class="nx">defaults</span><span class="p">.</span><span class="nx">myValue</span> <span class="o">=</span> <span class="nx">value</span><span class="p">;</span>
+</pre>
+</div>
+
+
+<p>After changing the defaults, <strong>always</strong> reapply them by calling the method applyDefaults().<br>
+Of course this will not change values that are already set in localStorage.</p>
+
+<div class="highlight">
+<pre><span class="nx">settings</span><span class="p">.</span><span class="nx">defaults</span><span class="p">.</span><span class="nx">myNewValue</span> <span class="o">=</span> <span class="nx">something</span><span class="p">;</span>
+<span class="nx">settings</span><span class="p">.</span><span class="nx">applyDefaults</span><span class="p">();</span>
+</pre>
+</div>
+
+
+<p>Everything in your store is always based on the defaults. You can't remove a value which has a default.<br>
+If you try to do so, the value is set to the default. If you want to remove a value with a default value, remove the default value first!</p>
+
+<h3>Objects</h3>
+
+<p>If you want to work with the contents of a store as an object, you can simply export and import the contents.<br>
+There are two methods for it: toObject() and fromObject().</p>
+
+<div class="highlight">
+<pre><span class="kd">var</span> <span class="nx">mySettings</span> <span class="o">=</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">toObject</span><span class="p">();</span>
+
+<span class="c1">// and</span>
+
+<span class="nx">settings</span><span class="p">.</span><span class="nx">fromObject</span><span class="p">(</span><span class="nx">mySettings</span><span class="p">);</span>
+</pre>
+</div>
+
+
+<p>fromObject() by default replaces the complete store with the values passed in.
+(But even here, defaults are taken into account, you can't remove values which have defaults.)<br>
+This means, everything in the store gets removed, and replaced with your values.</p>
+
+<p>But you can also merge. In this case, no values currently in the store get removed, only replaced.
+To merge an object, pass true as the second parameter:</p>
+
+<div class="highlight">
+<pre><span class="kd">var</span> <span class="nx">mySettings</span> <span class="o">=</span> <span class="p">{...};</span>
+<span class="nx">settings</span><span class="p">.</span><span class="nx">fromObject</span><span class="p">(</span><span class="nx">mySettings</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+</pre>
+</div>
+
+
+<h3>Events</h3>
+
+<p>store.js supports events. Fake events to be exact. There is no way to add an event listener
+for localstorage to the DOM, so store.js emulates events by checking periodically for new values.<br>
+The default period is 500ms. You can set a custom value by setting watcherSpeed in the constructor (third parameter).<br>
+Keep in mind that checking for new values costs CPU time, so use this setting wisely!</p>
+
+<p>To add and remove listeners, use addEvent() and removeEvent().</p>
+
+<div class="highlight">
+<pre><span class="nx">settings</span><span class="p">.</span><span class="nx">addEvent</span><span class="p">(</span><span class="s2">"color"</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">store</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"New value of color is: "</span> <span class="o">+</span> <span class="nx">value</span><span class="p">);</span>
+<span class="p">});</span>
+</pre>
+</div>
+
+
+<p>You can also subscribe to all values ("*"):</p>
+
+<div class="highlight">
+<pre><span class="nx">settings</span><span class="p">.</span><span class="nx">addEvent</span><span class="p">(</span><span class="s2">"*"</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">store</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">name</span> <span class="o">+</span> <span class="s2">" in the store "</span> <span class="o">+</span> <span class="nx">store</span> <span class="o">+</span> <span class="s2">" has a new value: "</span> <span class="o">+</span> <span class="nx">value</span><span class="p">);</span>
+<span class="p">});</span>
+</pre>
+</div>
+
+
+<p>The callback function gets passed three arguments: the new value, the name of the value, and the name of the store.<br>
+Remove an event listener (you need to save a reference to the callback function when adding the event listener!):</p>
+
+<div class="highlight">
+<pre><span class="kd">var</span> <span class="nx">myFunction</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">store</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// do something</span>
+<span class="p">};</span>
+
+<span class="nx">settings</span><span class="p">.</span><span class="nx">addEvent</span><span class="p">(</span><span class="s2">"color"</span><span class="p">,</span> <span class="nx">myFunction</span><span class="p">);</span>
+<span class="nx">settings</span><span class="p">.</span><span class="nx">removeEvent</span><span class="p">(</span><span class="s2">"color"</span><span class="p">,</span> <span class="nx">myFunction</span><span class="p">);</span>
+</pre>
+</div>
+
+
+<h3>Reference</h3>
+
+<p>* = optional</p>
+
+<h6>Constructor</h6>
+
+<div class="highlight">
+<pre><span class="kd">var</span> <span class="nx">settings</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Store</span><span class="p">(</span><span class="s2">"settings"</span><span class="p">,</span> <span class="p">{</span>
+    <span class="s2">"color"</span><span class="o">:</span> <span class="s2">"blue"</span><span class="p">,</span>
+    <span class="s2">"sound"</span><span class="o">:</span> <span class="mf">0.8</span>
+<span class="p">},</span> <span class="mi">1000</span><span class="p">);</span>
+
+<span class="c1">// OR...</span>
+
+<span class="kd">var</span> <span class="nx">settings</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Store</span><span class="p">(</span><span class="s2">"settings"</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="mi">100</span><span class="p">);</span>
+
+<span class="c1">// OR...</span>
+
+<span class="kd">var</span> <span class="nx">settings</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Store</span><span class="p">(</span><span class="s2">"settings"</span><span class="p">);</span>
+</pre>
+</div>
+
+
+<p><strong>Parameters</strong>: name(string), <em>defaults(object) = {}, *watcherSpeed(number) = 500<br>
+**Return value</em>*: store(object)</p>
+
+<p>Creates a new Store, optionally with default values and a custom watcher speed.<br>
+If a value is already present in localStorage, it will not be overridden.<br>
+If a value is not already present, it will be created with the default value.<br>
+watcherSpeed is the period after which the event emulator checks for changes.
+Keep in mind that checking for new values costs CPU time, so use this setting wisely!</p>
+
+<h6>clear() (class method)</h6>
+
+<div class="highlight">
+<pre><span class="nx">Store</span><span class="p">.</span><span class="nx">clear</span><span class="p">();</span>
+</pre>
+</div>
+
+
+<p><strong>Parameters</strong>: (none)<br><strong>Return value</strong>: (none)</p>
+
+<p>Removes everything from localStorage.</p>
+
+<h6>name (string)</h6>
+
+<p>Contains the name of the store.<br>
+Don't change it manually! Create a new store instead.</p>
+
+<h6>defaults (object)</h6>
+
+<p>Contains the defaults.<br>
+You may change this value manually, but you <strong>must</strong> run applyDefaults() afterwards!</p>
+
+<h6>watcherSpeed (number)</h6>
+
+<p>Contains the period after which the event emulator checks for changes.<br>
+You may change this value manually, but keep in mind that checking for new values costs CPU time, so use this setting wisely!</p>
+
+<h6>listeners (object)</h6>
+
+<p>Contains the event listeners.<br>
+Don't tinker with it! Use addEvent() and removeEvent() instead!</p>
+
+<h6>applyDefaults()</h6>
+
+<div class="highlight">
+<pre><span class="nx">settings</span><span class="p">.</span><span class="nx">applyDefaults</span><span class="p">();</span>
+</pre>
+</div>
+
+
+<p><strong>Parameters</strong>: (none)<br><strong>Return value</strong>: store(object)</p>
+
+<p>Used internally to apply defaults when necessary.<br><strong>Always</strong> call this method when you update the defaults by changing the defaults instance variable.</p>
+
+<h6>watcher()</h6>
+
+<div class="highlight">
+<pre><span class="nx">settings</span><span class="p">.</span><span class="nx">watcher</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+
+<span class="c1">// or</span>
+
+<span class="nx">settings</span><span class="p">.</span><span class="nx">watcher</span><span class="p">();</span>
+</pre>
+</div>
+
+
+<p><strong>Parameters</strong>: <em>force(boolean) = false<br>
+**Return value</em>*: store(object)</p>
+
+<p>Used internally to start the watcher when adding event listeners.<br>
+Don't tinker with it, unless you know what you're doing!</p>
+
+<h6>get()</h6>
+
+<div class="highlight">
+<pre><span class="kd">var</span> <span class="nx">color</span> <span class="o">=</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">"color"</span><span class="p">);</span>
+</pre>
+</div>
+
+
+<p><strong>Parameters</strong>: name(string)<br><strong>Return value</strong>: value(any) or undefined</p>
+
+<p>Retrieves a value. (And automatically JSON-deserializes it)<br>
+If a value is not present in localStorage, it will return undefined.</p>
+
+<h6>set()</h6>
+
+<div class="highlight">
+<pre><span class="nx">settings</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s2">"color"</span><span class="p">,</span> <span class="s2">"blue"</span><span class="p">);</span>
+</pre>
+</div>
+
+
+<p><strong>Parameters</strong>: name(string), value(any)<br><strong>Return value</strong>: store(object)</p>
+
+<p>Sets a value. (And automatically JSON-serializes it)<br>
+If the new value is undefined, the value will be removed from localStorage.<br>
+Use null instead, if you want to set a value to "nothing".</p>
+
+<h6>remove()</h6>
+
+<div class="highlight">
+<pre><span class="nx">settings</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="s2">"color"</span><span class="p">);</span>
+</pre>
+</div>
+
+
+<p><strong>Parameters</strong>: name(string)<br><strong>Return value</strong>: store(object)</p>
+
+<p>Removes a value.<br>
+If the value has a default, the value will fall back to the default.</p>
+
+<h6>reset()</h6>
+
+<div class="highlight">
+<pre><span class="nx">settings</span><span class="p">.</span><span class="nx">reset</span><span class="p">();</span>
+</pre>
+</div>
+
+
+<p><strong>Parameters</strong>: (none)<br><strong>Return value</strong>: store(object)</p>
+
+<p>Removes all values of a store and restores the defaults.</p>
+
+<h6>toObject()</h6>
+
+<div class="highlight">
+<pre><span class="kd">var</span> <span class="nx">object</span> <span class="o">=</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">toObject</span><span class="p">();</span>
+</pre>
+</div>
+
+
+<p><strong>Parameters</strong>: (none)<br><strong>Return value</strong>: values(object)</p>
+
+<p>Puts all values of a store in an object.</p>
+
+<h6>fromObject()</h6>
+
+<div class="highlight">
+<pre><span class="nx">settings</span><span class="p">.</span><span class="nx">fromObject</span><span class="p">({</span>
+    <span class="s2">"color"</span><span class="o">:</span> <span class="s2">"brown"</span><span class="p">,</span>
+    <span class="s2">"use_everything"</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="s2">"be_a_hero"</span><span class="o">:</span> <span class="kc">true</span>
+<span class="p">});</span>
+</pre>
+</div>
+
+
+<p><strong>Parameters</strong>: values(object), <em>merge(boolean) = false<br>
+**Return value</em>*: store(object)</p>
+
+<p>Replaces the store with the values from an object.<br>
+If "merge" is false (which is the default), then the complete store will be removed, and replaced with the values. (Defaults will be restored anyways.)<br>
+If "merge" is true, then new values will be added, different values will be replaced, all other values won't be touched.</p>
+
+<h6>addEvent()</h6>
+
+<div class="highlight">
+<pre><span class="nx">settings</span><span class="p">.</span><span class="nx">addEvent</span><span class="p">(</span><span class="s2">"color"</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">store</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// ...</span>
+<span class="p">});</span>
+
+<span class="c1">// OR...</span>
+
+<span class="nx">settings</span><span class="p">.</span><span class="nx">addEvent</span><span class="p">(</span><span class="s2">"*"</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">store</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// ...</span>
+<span class="p">});</span>
+</pre>
+</div>
+
+
+<p><strong>Parameters</strong>: selector(string), callback(function)<br><strong>Return value</strong>: store(object)</p>
+
+<p>Adds an event listener for a specific value or all values ("*").<br>
+The callback function gets passed three arguments: the new value, the name of the value, and the name of the store.</p>
+
+<h6>removeEvent()</h6>
+
+<div class="highlight">
+<pre><span class="nx">settings</span><span class="p">.</span><span class="nx">removeEvent</span><span class="p">(</span><span class="s2">"color"</span><span class="p">,</span> <span class="nx">callback</span><span class="p">);</span>
+
+<span class="c1">// OR...</span>
+
+<span class="nx">settings</span><span class="p">.</span><span class="nx">removeEvent</span><span class="p">(</span><span class="s2">"*"</span><span class="p">,</span> <span class="nx">callback</span><span class="p">);</span>
+</pre>
+</div>
+
+
+<p><strong>Parameters</strong>: selector(string), callback(function)<br><strong>Return value</strong>: store(object)</p>
+
+<p>Removes an event listener for a specific value or all values ("*").<br>
+The callback must be a pointer to a previously with addEvent() added function.</p>
+
+<h6>fireEvent()</h6>
+
+<div class="highlight">
+<pre><span class="nx">settings</span><span class="p">.</span><span class="nx">fireEvent</span><span class="p">(</span><span class="s2">"color"</span><span class="p">,</span> <span class="s2">"blue"</span><span class="p">);</span>
+</pre>
+</div>
+
+
+<p><strong>Parameters</strong>: name(string), value(any)<br><strong>Return value</strong>: store(object)</p>
+
+<p>Used internally to fire events.<br>
+Don't tinker with it, unless you know what you're doing!</p>
+
+<h3>License</h3>
+
+<p>store.js is licensed under the <strong>MIT-license</strong>.<br>
+For details see <em>LICENSE.txt</em></p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/frankkohlhepp">frankkohlhepp</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+  </body>
+</html>
