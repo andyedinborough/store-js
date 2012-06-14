@@ -4,7 +4,10 @@
 // https://github.com/frankkohlhepp/store-js
 // License: MIT-license
 //
-(function () {
+/*jshint browser: true */
+(function (window, undefined) {
+    'use strict';
+
     var has = function (object, key) {
         return Object.prototype.hasOwnProperty.call(object, key);
     };
@@ -36,7 +39,7 @@
         return array;
     };
     
-    var Store = this.Store = function (name, defaults, watcherSpeed) {
+    var Store = window.Store = function (name, defaults, watcherSpeed) {
         this.name = name;
         this.defaults = defaults || {};
         this.watcherSpeed = watcherSpeed || 500;
@@ -69,13 +72,14 @@
             this.newObject = this.toObject();
             
             if (this.oldObject) {
-                for (var key in this.newObject) {
+                var key;
+                for (key in this.newObject) {
                     if (has(this.newObject, key) && this.newObject[key] !== this.oldObject[key]) {
                         this.fireEvent(key, this.newObject[key]);
                     }
                 }
                 
-                for (var key in this.oldObject) {
+                for (key in this.oldObject) {
                     if (has(this.oldObject, key) && !has(this.newObject, key)) {
                         this.fireEvent(key, this.newObject[key]);
                     }
@@ -180,4 +184,4 @@
         
         return this;
     };
-}());
+}(window));
